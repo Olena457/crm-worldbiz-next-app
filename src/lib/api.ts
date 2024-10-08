@@ -56,16 +56,25 @@ export interface Promotion {
 
 const PROJECT_TOKEN = process.env.NEXT_PUBLIC_PROJECT_TOKEN;
 
+console.log('Project Token:', process.env.NEXT_PUBLIC_PROJECT_TOKEN);
+
 const buildUrl = (...paths: string[]) =>
   `https://${PROJECT_TOKEN}.mockapi.io/api/v1/${paths.join('/')}`;
 
 const stringifyQueryParams = (params: Record<string, string>) =>
   new URLSearchParams(params).toString();
 
+const url = buildUrl('companies');
+console.log('Request URL:', url);
+
 const sendRequest = async <T>(url: string, init?: RequestInit) => {
   const res = await fetch(url, init);
   if (!res.ok) {
     throw new Error(await res.text());
+  }
+  const data = await res.json();
+  if (!data) {
+    throw new Error('No data returned from the server');
   }
 
   return (await res.json()) as T;
